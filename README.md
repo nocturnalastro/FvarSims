@@ -3,7 +3,7 @@
 ##TODO
 * make use of pyxspec so we can remove the need to make loads of files.
 * Add prefix to lc log files 
-
+* remove uncertanites as its not needed - then test it still works
 
 ## Install
 I haven't packaged this!
@@ -42,11 +42,21 @@ To convert the log files into something useful like calculating the fractional v
 from simlog2fvar import logs_to_fvar,dofvar,nonan,unp_to_tuple,nanmean
 ens, fv = logs_to_fvar(prefix="lc", dir=".", dofunc=dofvar) #not needed in this case but as an example
 ```
-**N.B** if you just want the lightcurves you can change dofunc to something like `lambda x: x` so the lightcurve is returned
-So now we have alot of realistions of Fvar spectra so lets take the mean. however some of the lightcurves can produced `NaN`s due to the nature of Fvar, so lets throw them away and take the mean .
+**N.B** if you just want the something different to the lightcurves you can change dofunc to something like `lambda x: x` so the lightcurve is returned (there is a function `make_lcs` in simulatons.py but it only does one file - bad naming I know).
+
+So now we have alot of realistions of Fvar spectra so lets take the mean. however some of the lightcurves can produced `NaN`s due to the nature of Fvar, so lets throw them away and take the mean.
 
 ```
 fv = nonan(fv).T
-fmean = np.mean(fv)
-
+fmean,_ unp_to_tuple(nanmean(fv))
 ```
+
+Error bars are nice! 
+So lets calculate them from the width of the distribution. Also it's probably a good idea to plot them to make sure they don't look odd.
+```
+dists = calc_dist(fv, 8) # we only have 80 fvars so not really all tha usefull
+plt.ion()
+plot_dist_fit(dists,1,4) #1 row 4 columns  or the other way round I can't remember
+sigmas = get_dist_sigma(dists)
+```
+

@@ -36,10 +36,10 @@ run(40,sxcm)
 ```
 
 This will produce the files `lc0.log->lc79.log` (I havent put a prefix for lc*.log files).
-To convert the log files into something useful like calculating the fractional variabilty
+To convert the log files into something useful like calculating the fractional variabilty (this is mostly written in the `main` for a vary basic case)
 
 ```
-from simlog2fvar import logs_to_fvar,dofvar,nonan,unp_to_tuple,nanmean
+from simlog2fvar import logs_to_fvar, dofvar, nonan, unp_to_tuple, nanmean, write_fvar
 ens, fv = logs_to_fvar(prefix="lc", dir=".", dofunc=dofvar) #not needed in this case but as an example
 ```
 **N.B** if you just want the something different to the lightcurves you can change dofunc to something like `lambda x: x` so the lightcurve is returned (there is a function `make_lcs` in simulatons.py but it only does one file - bad naming I know).
@@ -59,4 +59,7 @@ plt.ion()
 plot_dist_fit(dists,1,4) #1 row 4 columns  or the other way round I can't remember
 sigmas = get_dist_sigma(dists)
 ```
-
+So lets write this to a handy ascii file!
+```
+write_fvar(ens, zip(fmean, sigs), prefix="big_mean")
+```
